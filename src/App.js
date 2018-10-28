@@ -1,30 +1,17 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.css'
 import Metrika from './api/metrika'
 
-const ym = new Metrika()
+export default function App() {
+  let ym = new Metrika()
 
-class App extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {}
-  }
-  componentDidMount() {
-    let token = /access_token=([^&]+)/.exec(document.location.hash)
-    token = token && token[1]
-    token && this.setState({ token })
-  }
-  render() {
-    return (
-      <div className="App">
-        <p className="App-intro">
-         Антон меняет пароли<br /><br />
-          <a href={ym.auth}> AUTH</a>
-          {this.state.token && ym.getData(this.state.token)}
-        </p>
-      </div>
-    )
-  }
+  const [token] = useState(ym.getToken())
+
+  return (
+    <div>
+      {token ? `Your token is ${token}` : <a href={ym.authUrl}>Auth</a>}
+      {console.log(ym.token)}
+      {window.location.hash = ''}
+    </div>
+  )
 }
-
-export default App
