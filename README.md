@@ -1,1 +1,1 @@
-This is a client for Log API of Yandex Metrika
+This is a client for Logs API of Yandex Metrika

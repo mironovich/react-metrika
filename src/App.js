@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
 import Metrika from './api/metrika'
+import Counter from './components/Counter'
 
 export default function App() {
   let ym = new Metrika()
@@ -9,9 +10,9 @@ export default function App() {
 
   return (
     <div>
-      {token ? `Your token is ${token}` : <a href={ym.authUrl}>Auth</a>}
+      {token ? <Counter ym={ym} /> : <a href={ym.authUrl}>Auth</a>}
       {console.log(ym.token)}
-      {window.location.hash = ''}
+      {(window.location.hash = '')}
     </div>
   )
 }

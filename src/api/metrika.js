@@ -2,7 +2,8 @@
 require('isomorphic-fetch')
 
 export default function Metrika(proxy = '') {
-  let token
+  let token,
+    counters = []
 
   this.authUrl =
     'https://oauth.yandex.ru/authorize?' +
@@ -17,8 +18,7 @@ export default function Metrika(proxy = '') {
       removeHash()
       this.token = t[1]
       window.sessionStorage.setItem('token', this.token)
-    }
-    else {
+    } else {
       this.token = window.sessionStorage.getItem('token')
     }
     return this.token
@@ -34,5 +34,17 @@ export default function Metrika(proxy = '') {
 
   this.getToken = () => {
     return this.token || this.setToken()
+  }
+
+  this.getCounters = async () => {
+    console.log(`Account token: ${this.token}`)
+    const response = await fetch(
+      'https://burger-cors.herokuapp.com/https://api-metrika.yandex.ru/management/v1/counters?oauth_token=' +
+        this.token
+    )
+    const data = await response.json()
+    // console.log(data)
+    this.counters = data.counters
+    return this.counters
   }
 }
