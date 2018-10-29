@@ -1,11 +1,11 @@
-import React from 'react';
+import React from 'react'
 
-const Request = () => {
+const Request = props => {
   return (
-    <div>
-      ЗАпрос
-    </div>
-  );
-};
+    <>
+her
+    </>
+  )
+}
 
-export default Request;
+export default Request

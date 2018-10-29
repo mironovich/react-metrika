@@ -8,8 +8,11 @@ export default function Metrika(proxy = '') {
   let token,
     counters = []
 
-    const url = {
-      auth: 'https://oauth.yandex.ru/authorize?' +
+  this.counter = undefined
+
+  this.url = {
+    auth:
+      'https://oauth.yandex.ru/authorize?' +
       'response_type=token' +
       '&client_id=' +
       process.env.REACT_APP_ID +
@@ -17,8 +20,10 @@ export default function Metrika(proxy = '') {
       '&redirect_uri=' +
       window.location.href,
 
-      validate: proxy + 'https://api-metrika.yandex.ru/management/v1/counter/41649664/logrequests/evaluate?date1=2016%2D01%2D01&date2=2016%2D01%2D31&fields=ym%3Apv%3AdateTime%2Cym%3Apv%3Areferer&source=hits&oauth_token=AQAAAAAAltmcAAU5eiaXiDteZEe0nNxe1Tb_7lc'
-    }
+    validate:
+      proxy +
+      'https://api-metrika.yandex.ru/management/v1/counter/41649664/logrequests/evaluate?date1=2016%2D01%2D01&date2=2016%2D01%2D31&fields=ym%3Apv%3AdateTime%2Cym%3Apv%3Areferer&source=hits&oauth_token=AQAAAAAAltmcAAU5eiaXiDteZEe0nNxe1Tb_7lc',
+  }
 
   const setToken = () => {
     let t = document.URL.match(/#.*access_token=([a-zA-Z0-9_]+)&/)
@@ -39,6 +44,14 @@ export default function Metrika(proxy = '') {
       window.location.pathname + window.location.search
     )
   }
+  this.setCounter = counter => {
+    this.counter = counter
+    return this.counter
+  }
+
+  this.getCounter = () => {
+    return this.counter
+  }
 
   this.getToken = () => {
     return this.token || setToken()
@@ -47,7 +60,6 @@ export default function Metrika(proxy = '') {
   this.getCounters = async () => {
     const t = window.sessionStorage.getItem('counters')
     if (t) {
-      console.log(`DEBUG: SESSION - COUNTERS`)
       this.counters = JSON.parse(t)
     } else {
       console.log(`DEBUG: REQUEST - COUNTERS`)

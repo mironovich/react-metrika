@@ -3,7 +3,7 @@ import React from 'react';
 const Auth = (props) => {
   return (
     <>
-      <a href={props.url.auth}>Auth</a>
+      <a href={props.authUrl}>Auth</a>
     </>
   );
 };

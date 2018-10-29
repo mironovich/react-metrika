@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react'
+// TODO: add custom hooks for state update
+
+import React, { useState } from 'react'
 import './App.css'
 import Metrika from './api/metrika'
 import Counter from './components/Counter'
@@ -9,20 +11,20 @@ const App = () => {
   let ym = new Metrika()
 
   const [token] = useState(ym.getToken())
-  const [counter, setCounter] = useState('')
 
   const updateCounter = counter => {
-    setCounter(counter)
+    ym.counter = counter
   }
 
   return (
     <div>
+      {console.log(`DEBUG: RENDERING APP - ${ym.counter}`)}
       {token ? (
-        <Counter {...ym} update={updateCounter} counter={counter} />
+        <Counter {...ym} updateCounter={updateCounter} />
       ) : (
         <Auth authUrl={ym.url.auth} />
       )}
-      {counter && <Request />}
+      {ym.counter && <Request />}
     </div>
   )
 }
