@@ -1,3 +1,6 @@
+// TODO: add proxy var
+// TODO: add requests url lib
+
 // const config = require('../constants/.config.json')
 require('isomorphic-fetch')
 
@@ -5,14 +8,19 @@ export default function Metrika(proxy = '') {
   let token,
     counters = []
 
-  this.authUrl =
-    'https://oauth.yandex.ru/authorize?' +
-    'response_type=token' +
-    '&client_id=' +
-    process.env.REACT_APP_ID +
-    '&display=popup'
+    const url = {
+      auth: 'https://oauth.yandex.ru/authorize?' +
+      'response_type=token' +
+      '&client_id=' +
+      process.env.REACT_APP_ID +
+      '&display=popup' +
+      '&redirect_uri=' +
+      window.location.href,
 
-  this.setToken = () => {
+      validate: proxy + 'https://api-metrika.yandex.ru/management/v1/counter/41649664/logrequests/evaluate?date1=2016%2D01%2D01&date2=2016%2D01%2D31&fields=ym%3Apv%3AdateTime%2Cym%3Apv%3Areferer&source=hits&oauth_token=AQAAAAAAltmcAAU5eiaXiDteZEe0nNxe1Tb_7lc'
+    }
+
+  const setToken = () => {
     let t = document.URL.match(/#.*access_token=([a-zA-Z0-9_]+)&/)
     if (t) {
       removeHash()
@@ -24,7 +32,7 @@ export default function Metrika(proxy = '') {
     return this.token
   }
 
-  function removeHash() {
+  const removeHash = () => {
     window.history.pushState(
       '',
       document.title,
@@ -33,18 +41,27 @@ export default function Metrika(proxy = '') {
   }
 
   this.getToken = () => {
-    return this.token || this.setToken()
+    return this.token || setToken()
   }
 
   this.getCounters = async () => {
-    console.log(`Account token: ${this.token}`)
-    const response = await fetch(
-      'https://burger-cors.herokuapp.com/https://api-metrika.yandex.ru/management/v1/counters?oauth_token=' +
-        this.token
-    )
-    const data = await response.json()
-    // console.log(data)
-    this.counters = data.counters
+    const t = window.sessionStorage.getItem('counters')
+    if (t) {
+      console.log(`DEBUG: SESSION - COUNTERS`)
+      this.counters = JSON.parse(t)
+    } else {
+      console.log(`DEBUG: REQUEST - COUNTERS`)
+      const response = await fetch(
+        'https://burger-cors.herokuapp.com/https://api-metrika.yandex.ru/management/v1/counters?oauth_token=' +
+          this.token
+      )
+      const data = await response.json()
+
+      this.counters = data.counters.map(counter => {
+        return { id: counter.id, name: counter.name }
+      })
+      window.sessionStorage.setItem('counters', JSON.stringify(this.counters))
+    }
     return this.counters
   }
 }
